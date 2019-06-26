@@ -172,7 +172,10 @@ def guess_movie_name_year(file_path):
     file_name = basename(file_path)
     file_name_without_ext = splitext(file_name)[0]
     result = re.search(MOVIE_REGEX, file_name_without_ext)
-    return result.group(1), result.group(2)
+    #prevent python error if movie not in name (year) format
+    if result is not None:
+        return result.group(1), result.group(2)
+    return "", ""
 
 
 def get_episode_thumb(media, season, episode):
