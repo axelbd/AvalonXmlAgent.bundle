@@ -19,55 +19,55 @@ class AvalonXmlTvAgent(Agent.TV_Shows):
     accepts_from = ["com.plexapp.agents.localmedia"]
 
     def search(self, results, media, lang, manual):
-        PlexLog.debug("==================== Search Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
-        PlexLog.info("Search for %s" % get_show_title(media))
+        Log("==================== Search Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
+        Log("Search for %s" % get_show_title(media))
 
         # Get the root element in nfo
         root_element = get_show_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find tvshow.nfo in show directory.")
+            Log("Cannot find tvshow.nfo in show directory.")
             return None
 
         if root_element.tag != "tvshow":
-            PlexLog.error("Invalid format. The root tag should be <tvshow>.")
+            Log("Invalid format. The root tag should be <tvshow>.")
             return None
 
         tv_xml = TvXml(root_element)
 
         title = tv_xml.title
         if title is None:
-            PlexLog.error("Invalid format. Missing <title> tag.")
+            Log("Invalid format. Missing <title> tag.")
             return None
 
         year = tv_xml.originally_available_at.year if tv_xml.originally_available_at is not None else 0
-        PlexLog.debug("Title: %s" % title)
-        PlexLog.debug("Year: %d" % year)
+        Log("Title: %s" % title)
+        Log("Year: %d" % year)
 
         # Plex throws exception that have "/" in ID
         mid = b64encode("%s:%d" % (title, year)).replace("/", "_")
 
         results.Append(MetadataSearchResult(id=mid, name=title, year=year, lang=lang, score=100))
 
-        PlexLog.debug("====================  Search end  ====================")
+        Log("====================  Search end  ====================")
 
     def update(self, metadata, media, lang, force):
-        PlexLog.debug("==================== Update Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
-        PlexLog.info("Search for %s" % get_show_title(media))
+        Log("==================== Update Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
+        Log("Search for %s" % get_show_title(media))
 
         # Get the root element in xml
         root_element = get_show_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find tvshow.nfo in show directory.")
+            Log("Cannot find tvshow.nfo in show directory.")
             return None
 
         if root_element.tag != "tvshow":
-            PlexLog.error("Invalid format. The root tag should be <tvshow>.")
+            Log("Invalid format. The root tag should be <tvshow>.")
             return None
 
         tv_xml = TvXml(root_element)
@@ -75,7 +75,7 @@ class AvalonXmlTvAgent(Agent.TV_Shows):
         tv_xml.set_metadata(metadata)
         self.update_episode(metadata, media)
 
-        PlexLog.debug("====================  Update end  ====================")
+        Log("====================  Update end  ====================")
 
     @staticmethod
     def update_episode(metadata, media):
@@ -89,7 +89,7 @@ class AvalonXmlTvAgent(Agent.TV_Shows):
                     if summary is not None:
                         put_update(season_id, "3", summary=summary)
                     updated_summary = True
-                PlexLog.debug("Update %s (season: %s, episode: %s)" % (title, season, episode))
+                Log("Update %s (season: %s, episode: %s)" % (title, season, episode))
                 episode_metadata = metadata.seasons[season].episodes[episode]
                 root_element = get_episode_xml(media, season, episode)
                 if root_element is None:
@@ -118,59 +118,58 @@ class AvalonXmlMovieAgent(Agent.Movies):
     accepts_from = ["com.plexapp.agents.localmedia"]
 
     def search(self, results, media, lang, manual):
-        PlexLog.debug("==================== Search Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
-        PlexLog.info("Search for %s" % get_movie_title(media))
+        Log("==================== Search Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
+        Log("Search for %s" % get_movie_title(media))
 
         # Get the root element in xml
         root_element = get_movie_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find xml in movie directory.")
+            Log("Cannot find xml in movie directory.")
             return None
 
         if root_element.tag != "movie":
-            PlexLog.error("Invalid format. The root tag should be <movie>.")
+            Log("Invalid format. The root tag should be <movie>.")
             return None
 
         movie_xml = MovieXml(root_element)
 
         title = movie_xml.title
         if title is None:
-            PlexLog.error("Invalid format. Missing <title> tag.")
+            Log("Invalid format. Missing <title> tag.")
             return None
 
         year = movie_xml.originally_available_at.year if movie_xml.originally_available_at is not None else 0
-        PlexLog.debug("Title: %s" % title)
-        PlexLog.debug("Year: %d" % year)
+        Log("Title: %s" % title)
+        Log("Year: %d" % year)
 
         # Plex throws exception that have "/" in ID
         mid = b64encode("%s:%d" % (title, year)).replace("/", "_")
-        #removed lang because Plex didn't like it and wouldn't run update
-        results.Append(MetadataSearchResult(id=mid, name=title, year=year, score=100))
-
-        PlexLog.debug("====================  Search end  ====================")
+        results.Append(MetadataSearchResult(id=mid, name=title, year=year, lang=lang, score=100))
+        Log(MetadataSearchResult(id=mid, name=title, year=year, lang=lang, score=100))
+        Log("====================  Search end  ====================")
 
     def update(self, metadata, media, lang, force):
-        PlexLog.debug("==================== Update Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
-        PlexLog.info("Search for %s" % get_movie_title(media))
+        Log("==================== Update Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
+        Log("Search for %s" % get_movie_title(media))
 
         # Get the root element in nfo
         root_element = get_movie_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find nfo in movie directory.")
+            Log("Cannot find nfo in movie directory.")
             return None
 
         if root_element.tag != "movie":
-            PlexLog.error("Invalid format. The root tag should be <movie>.")
+            Log("Invalid format. The root tag should be <movie>.")
             return None
         movie_xml = MovieXml(root_element)
         movie_xml.set_metadata(metadata)
-        PlexLog.debug("====================  Update end  ====================")
+        Log("====================  Update end  ====================")
 
 
 # noinspection PyClassHasNoInit
@@ -182,41 +181,41 @@ class AvalonXmlArtistAgent(Agent.Artist):
     accepts_from = ["com.plexapp.agents.localmedia"]
 
     def search(self, results, media, lang, manual):
-        PlexLog.debug("==================== Search Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
+        Log("==================== Search Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
 
         # Get the root element in xml
         root_element = get_artist_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find xml in movie directory.")
+            Log("Cannot find xml in movie directory.")
             return None
 
         if root_element.tag != "artist":
-            PlexLog.error("Invalid format. The root tag should be <artist>.")
+            Log("Invalid format. The root tag should be <artist>.")
             return None
 
-        PlexLog.debug("Artist: %s" % media.title)
+        Log("Artist: %s" % media.title)
 
         results.Append(MetadataSearchResult(id=media.id, name=media.title, lang=lang, year=None, score=100))
 
-        PlexLog.debug("====================  Search end  ====================")
+        Log("====================  Search end  ====================")
 
     def update(self, metadata, media, lang, force):
-        PlexLog.debug("==================== Update Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
+        Log("==================== Update Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
 
         # Get the root element in xml
         root_element = get_artist_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find xml in movie directory.")
+            Log("Cannot find xml in movie directory.")
             return None
 
         if root_element.tag != "artist":
-            PlexLog.error("Invalid format. The root tag should be <artist>.")
+            Log("Invalid format. The root tag should be <artist>.")
             return None
 
         artist_xml = ArtistXml(root_element)
@@ -228,7 +227,7 @@ class AvalonXmlArtistAgent(Agent.Artist):
             key = hashlib.md5(cover).hexdigest()
             metadata.posters[key] = proxy
 
-        PlexLog.debug("====================  Update end  ====================")
+        Log("====================  Update end  ====================")
 
 
 # noinspection PyClassHasNoInit
@@ -240,52 +239,52 @@ class AvalonXmlAlbumAgent(Agent.Album):
     accepts_from = ["com.plexapp.agents.localmedia"]
 
     def search(self, results, media, lang, manual):
-        PlexLog.debug("==================== Search Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
+        Log("==================== Search Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
 
         # Get the root element in xml
         root_element = get_album_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find xml in movie directory.")
+            Log("Cannot find xml in movie directory.")
             return None
 
         if root_element.tag != "album":
-            PlexLog.error("Invalid format. The root tag should be <album>.")
+            Log("Invalid format. The root tag should be <album>.")
             return None
 
-        PlexLog.debug("Album: %s" % media.title)
+        Log("Album: %s" % media.title)
 
         results.Append(MetadataSearchResult(id=media.id, name=media.title, lang=lang, year=None, score=100))
 
-        PlexLog.debug("====================  Search end  ====================")
+        Log("====================  Search end  ====================")
 
     def update(self, metadata, media, lang, force):
-        PlexLog.debug("==================== Update Start ====================")
-        PlexLog.debug("%s (%s)" % (self.name, self.ver))
-        PlexLog.debug("Plex version: %s" % Platform.ServerVersion)
+        Log("==================== Update Start ====================")
+        Log("%s (%s)" % (self.name, self.ver))
+        Log("Plex version: %s" % Platform.ServerVersion)
 
         # Get the root element in xml
         root_element = get_album_xml(media)
 
         if root_element is None:
-            PlexLog.error("Cannot find xml in movie directory.")
+            Log("Cannot find xml in movie directory.")
             return None
 
         if root_element.tag != "album":
-            PlexLog.error("Invalid format. The root tag should be <album>.")
+            Log("Invalid format. The root tag should be <album>.")
             return None
 
         album_xml = AlbumXml(root_element)
         album_xml.set_metadata(metadata)
         update_album(str(media.id), media.title, album_xml)
 
-        PlexLog.debug("====================  Update track  ====================")
+        Log("====================  Update track  ====================")
         for track in media.children:
             part = track.items[0].parts[0].file
             self.update_tracks(track.id, part)
-        PlexLog.debug("====================  Update end  ====================")
+        Log("====================  Update end  ====================")
 
     def update_tracks(self, media_id, file):
         try:
@@ -293,4 +292,4 @@ class AvalonXmlAlbumAgent(Agent.Album):
             artist_str = " / ".join(tags["artist"])
             update_track(media_id, artist_str)
         except Exception, e:
-            PlexLog.error(e)
+            Log(e)
