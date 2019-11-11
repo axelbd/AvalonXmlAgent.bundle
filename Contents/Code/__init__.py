@@ -147,8 +147,8 @@ class AvalonXmlMovieAgent(Agent.Movies):
 
         # Plex throws exception that have "/" in ID
         mid = b64encode("%s:%d" % (title, year)).replace("/", "_")
-        results.Append(MetadataSearchResult(id=mid, name=title, year=year, lang=lang, score=100))
-        Log(MetadataSearchResult(id=mid, name=title, year=year, lang=lang, score=100))
+        results.Append(MetadataSearchResult(id=mid, name=title, year=year, lang="xn", score=100))
+        Log(MetadataSearchResult(id=mid, name=title, year=year, lang="xn", score=100))
         Log("====================  Search end  ====================")
 
     def update(self, metadata, media, lang, force):
