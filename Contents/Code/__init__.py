@@ -147,7 +147,9 @@ class AvalonXmlMovieAgent(Agent.Movies):
 
         # Plex throws exception that have "/" in ID
         mid = b64encode("%s:%d" % (title, year)).replace("/", "_")
+        
         results.Append(MetadataSearchResult(id=mid, name=title, year=year, lang=lang, score=100))
+        
         PlexLog.debug("====================  Search end  ====================")
 
     def update(self, metadata, media, lang, force):
@@ -166,8 +168,10 @@ class AvalonXmlMovieAgent(Agent.Movies):
         if root_element.tag != "movie":
             PlexLog.error("Invalid format. The root tag should be <movie>.")
             return None
+            
         movie_xml = MovieXml(root_element)
         movie_xml.set_metadata(metadata)
+        
         PlexLog.debug("====================  Update end  ====================")
 
 
