@@ -307,6 +307,7 @@ def update_track(media_id, artist):
         PlexLog.error("request_url %s" % request_url)
         PlexLog.error(str(e))
 
+
 def get_server_status_code(url):
     host, path = urlparse.urlparse(url)[1:3]    # elems [1] and [2]
     path = urllib.quote(path)
@@ -316,6 +317,7 @@ def get_server_status_code(url):
         return conn.getresponse().status
     except StandardError:
         return None
+ 
  
 def check_url(url):
     r = get_server_status_code(url)
