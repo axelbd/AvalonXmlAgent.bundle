@@ -310,7 +310,7 @@ def update_track(media_id, artist):
 
 def get_server_status_code(url):
     host, path = urlparse.urlparse(url)[1:3]    # elems [1] and [2]
-    path = urllib.quote(path)
+    path = urllib.quote(path.encode('utf8'), ':/')
     try:
         conn = httplib.HTTPConnection(host)
         conn.request('HEAD', path)
