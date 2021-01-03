@@ -20,7 +20,7 @@ sudo chown plex:plex AvalonXmlAgent.bundle
 sudo service plexmediaserver restart
 ```
 
-### Maually
+### Manually
 ```sh
 sudo wget https://github.com/joshuaavalon/AvalonXmlAgent.bundle/archive/master.zip -P /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
 sudo unzip master.zip -d AvalonXmlAgent.bundle
