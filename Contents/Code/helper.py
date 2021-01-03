@@ -1,6 +1,8 @@
 import re
 import urllib
 import urllib2
+import httplib
+import urlparse
 from os.path import dirname, join, splitext, exists, basename
 
 from log import *
@@ -172,7 +174,10 @@ def guess_movie_name_year(file_path):
     file_name = basename(file_path)
     file_name_without_ext = splitext(file_name)[0]
     result = re.search(MOVIE_REGEX, file_name_without_ext)
-    return result.group(1), result.group(2)
+    #prevent python error if movie not in name (year) format
+    if result is not None:
+        return result.group(1), result.group(2)
+    return "", ""
 
 
 def get_episode_thumb(media, season, episode):
@@ -206,11 +211,11 @@ def get_artist_cover(media):
 
 def get_actor_thumb(name):
     actor_directory = Prefs["ActorsDirectory"]
-    if not actor_directory or not exists(actor_directory):
+    if not actor_directory or not check_url(actor_directory):
         return ""
     for ext in IMAGE_EXTS:
         image_path = join(actor_directory, "%s.%s" % (name, ext))
-        if exists(image_path):
+        if check_url(image_path):
             return image_path
     return ""
 
@@ -301,3 +306,20 @@ def update_track(media_id, artist):
     except urllib2.HTTPError as e:
         PlexLog.error("request_url %s" % request_url)
         PlexLog.error(str(e))
+
+
+def get_server_status_code(url):
+    host, path = urlparse.urlparse(url)[1:3]    # elems [1] and [2]
+    path = urllib.quote(path)
+    try:
+        conn = httplib.HTTPConnection(host)
+        conn.request('HEAD', path)
+        return conn.getresponse().status
+    except StandardError:
+        return None
+ 
+ 
+def check_url(url):
+    r = get_server_status_code(url)
+    good_codes = [httplib.OK, httplib.FOUND, httplib.MOVED_PERMANENTLY]
+    return r in good_codes

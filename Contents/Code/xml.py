@@ -259,7 +259,7 @@ class MovieXml(TvXml):
         self.producers = self.extract_producers()  # type: set
         self.writers = self.extract_writers()  # type: set
         self.directors = self.extract_directors()  # type: set
-        self.year = self.originally_available_at.year  # type: int
+        self.year = self.originally_available_at.year if self.originally_available_at is not None else None# type: int
         self.value_fields.append("year")
 
     def extract_originally_available_at(self):
